@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="en" >
+  <head>
+    <title>Angular Material - Starter App</title>
+
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="description" content="">
+    <meta name="viewport" content="initial-scale=1, maximum-scale=1, user-scalable=no" />
+
+    <link rel='stylesheet' href='http://fonts.googleapis.com/css?family=Roboto:400,500,700,400italic'>
+    <link rel="stylesheet" href="/public/app/bower_components/angular-material/angular-material.css"/>
+    <link rel="stylesheet" href="/public/app/assets/app.css"/>
+    <script src="/public/app/bower_components/angular/angular.js"></script>
+    <script src="/public/app/bower_components/angular-animate/angular-animate.js"></script>
+    <script src="/public/app/bower_components/angular-aria/angular-aria.js"></script>
+    <script type="text/javascript" src="/public/app/bower_components/angular-material/angular-material.js"></script>
+  </head>
+
+  <body>
+<div ng-app="myApp" layout="column" ng-controller="ServiceController" flex>
+    <md-grid-list
+          md-cols-sm="6" md-cols-md="6" md-cols-gt-md="6"
+          md-row-height-gt-md="5:1" md-row-height="2:1"
+          md-gutter="12px" md-gutter-gt-sm="8px" ng-if="page === 1">
+      <md-grid-tile class="purple"
+          md-rowspan="3" md-colspan="2" md-colspan-sm="6" ng-click="changeMode(1.4)">
+          <md-grid-tile-footer><h3>Walking</h3></md-grid-tile-footer>
+      </md-grid-tile>
+      <md-grid-tile class="gray"
+          md-rowspan="3" md-colspan="2" md-colspan-sm="6" ng-click="changeMode(4.5)">
+          <md-grid-tile-footer><h3>Riding</h3></md-grid-tile-footer>
+      </md-grid-tile>
+      <md-grid-tile class="gray"
+          md-rowspan="3" md-colspan="2" md-colspan-sm="6" ng-click="changeMode(11)">
+          <md-grid-tile-footer><h3>Driving</h3></md-grid-tile-footer>
+      </md-grid-tile>
+    </md-grid-list>
+    <md-grid-list
+          md-cols-sm="6" md-cols-md="6" md-cols-gt-md="6"
+          md-row-height-gt-md="5:1" md-row-height="2:1"
+          md-gutter="12px" md-gutter-gt-sm="8px" ng-if="page === 1">
+      <md-grid-tile class="green"
+          md-rowspan="3" md-colspan="2" md-colspan-sm="6" ng-click="getStops(0)">
+          <md-grid-tile-footer><h3>Train</h3></md-grid-tile-footer>
+      </md-grid-tile>
+      <md-grid-tile class="red"
+          md-rowspan="3" md-colspan="2" md-colspan-sm="6" ng-click="getStops(1)">
+          <md-grid-tile-footer><h3>Tram</h3></md-grid-tile-footer>
+      </md-grid-tile>
+      <md-grid-tile class="blue"
+          md-rowspan="3" md-colspan="2" md-colspan-sm="6" ng-click="getStops(2)">
+          <md-grid-tile-footer><h3>Bus</h3></md-grid-tile-footer>
+      </md-grid-tile>
+    </md-grid-list>
+
+  <div layout="column" layout-fill style="padding-bottom: 32px;" ng-repeat="location in locations" ng-if="page === 1">
+    <md-whiteframe class="md-whiteframe-z1" layout="column" layout-align="center center" ng-click="getDepartures(location)">
+      <h3>{{location.location_name}}</h3>
+      <p>Distance: {{ location.distance }} meters</p>
+      <p>Go in: {{ location.needTime }} minutes</p>
+    </md-whiteframe>
+  </div>    
+  <div layout="column" layout-fill style="padding-bottom: 32px;" ng-repeat="departure in departures" ng-if="page === 2">
+    <md-whiteframe class="md-whiteframe-z1" layout="column" layout-align="center center" ng-click="getLine(departure)">
+      <h3>From: {{departure.platform.stop.location_name}} To: {{departure.platform.direction.direction_name}}</h3>
+      <p>Destination: {{ departure.run.destination_name }}</p>
+      <p>{{ departure.time_realtime_utc }}</p>
+    </md-whiteframe>
+  </div> 
+  <div layout="column" layout-fill style="padding-bottom: 32px;" ng-repeat="line in lines" ng-if="page === 3">
+    <md-whiteframe class="md-whiteframe-z1" layout="column" layout-align="center center" ng-click="getNotification()">
+      <h3>{{line.location_name}}</h3>
+      <p>Suburb: {{ line.suburb }}</p>
+    </md-whiteframe>
+  </div> 
+  <div layout="column" layout-fill style="padding-bottom: 32px;" ng-if="page === 4">
+    <md-whiteframe class="md-whiteframe-z1" layout="column" layout-align="center center" ng-click="getNotification()">
+      <h3>Welldone</h3>
+      <p>Your {{transport_type }} is at {{startTime}}</p>
+      <p>You should start {{needTime}} minutes earlier</p>
+    </md-whiteframe>
+  </div> 
+</div>
+
+    <script src="/public/app/bower_components/ngGeolocation/ngGeolocation.js"></script>
+    <script src="/public/app/bower_components/angular-momentjs/angular-momentjs.js"></script>
+    <script src="/public/app/app.js"></script>
+
+    <script src="/public/app/src/landing/ServiceController.js"></script>
+
+
+  </body>
+</html>
