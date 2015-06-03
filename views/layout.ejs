@@ -1,20 +1,14 @@
 <!DOCTYPE html>
 <html lang="en" >
   <head>
-    <title>Angular Material - Starter App</title>
+    <title>PTV</title>
 
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="description" content="">
     <meta name="viewport" content="initial-scale=1, maximum-scale=1, user-scalable=no" />
-
-    <link rel='stylesheet' href='http://fonts.googleapis.com/css?family=Roboto:400,500,700,400italic'>
-    <link rel="stylesheet" href="/public/app/bower_components/angular-material/angular-material.css"/>
-    <link rel="stylesheet" href="/public/app/assets/app.css"/>
-    <script src="/public/app/bower_components/angular/angular.js"></script>
-    <script src="/public/app/bower_components/angular-animate/angular-animate.js"></script>
-    <script src="/public/app/bower_components/angular-aria/angular-aria.js"></script>
-    <script type="text/javascript" src="/public/app/bower_components/angular-material/angular-material.js"></script>
+    <link rel="stylesheet" href="/styles/angular-material.css">
+    <link rel="stylesheet" href="/styles/app.css">
   </head>
 
   <body>
@@ -44,7 +38,7 @@
           md-rowspan="3" md-colspan="2" md-colspan-sm="6" ng-click="getStops(0)">
           <md-grid-tile-footer><h3>Train</h3></md-grid-tile-footer>
       </md-grid-tile>
-      <md-grid-tile class="red"
+      <md-grid-tile class="yellow"
           md-rowspan="3" md-colspan="2" md-colspan-sm="6" ng-click="getStops(1)">
           <md-grid-tile-footer><h3>Tram</h3></md-grid-tile-footer>
       </md-grid-tile>
@@ -65,30 +59,51 @@
     <md-whiteframe class="md-whiteframe-z1" layout="column" layout-align="center center" ng-click="getLine(departure)">
       <h3>From: {{departure.platform.stop.location_name}} To: {{departure.platform.direction.direction_name}}</h3>
       <p>Destination: {{ departure.run.destination_name }}</p>
-      <p>{{ departure.time_realtime_utc }}</p>
+      <p>{{ departure.time_realtime_utc | date:"EEEE 'at' h:mma" }}</p>
+      <p>Route: {{departure.platform.direction.linedir_id}}</p>
     </md-whiteframe>
   </div> 
   <div layout="column" layout-fill style="padding-bottom: 32px;" ng-repeat="line in lines" ng-if="page === 3">
-    <md-whiteframe class="md-whiteframe-z1" layout="column" layout-align="center center" ng-click="getNotification()">
+    <md-whiteframe class="md-whiteframe-z1" layout="column" layout-align="center center" ng-click="getNotification(line.location_name)">
       <h3>{{line.location_name}}</h3>
       <p>Suburb: {{ line.suburb }}</p>
     </md-whiteframe>
   </div> 
   <div layout="column" layout-fill style="padding-bottom: 32px;" ng-if="page === 4">
-    <md-whiteframe class="md-whiteframe-z1" layout="column" layout-align="center center" ng-click="getNotification()">
+    <md-whiteframe class="md-whiteframe-z1" layout="column" layout-align="center center" ng-click="getNotification(destination)">
       <h3>Welldone</h3>
-      <p>Your {{transport_type }} is at {{startTime}}</p>
-      <p>You should start {{needTime}} minutes earlier</p>
+      <p>Your {{transport_type }} is at {{startTime | date:"EEEE 'at' h:mma"}}</p>
+      <p>You should start <b class="redfont">{{needTime}} minutes</b> earlier to reach {{destination}}</p>
+      <md-input-container flex>
+          <label>Send email notification to your dearling</label>
+          <input type="email" ng-model="userInput.email">
+      </md-input-container>
+      <md-input-container flex ng-if="userInput.email">
+          <label>Your name</label>
+          <input type="name" ng-model="userInput.name">
+      </md-input-container>
+      <div layout="row"> 
+       <md-button class="md-raised md-primary" ng-click="submit()">Share</md-button>
+       <md-button class="md-raised" ng-click="save()">Save Event</md-button>
+      </div>
+    </md-whiteframe>
+    <md-whiteframe class="md-whiteframe-z1" layout="column" layout-align="center center" ng-if="thanks === 'Thank you!'">
+      <h3>{{thanks}}</h3>
     </md-whiteframe>
   </div> 
 </div>
 
-    <script src="/public/app/bower_components/ngGeolocation/ngGeolocation.js"></script>
-    <script src="/public/app/bower_components/angular-momentjs/angular-momentjs.js"></script>
-    <script src="/public/app/app.js"></script>
-
-    <script src="/public/app/src/landing/ServiceController.js"></script>
-
-
+    <!--SCRIPTS-->
+    <script src="/js/dependencies/angular.js"></script>
+    <script src="/js/dependencies/angular-material.js"></script>
+    <script src="/js/dependencies/angular-aria.js"></script>
+    <script src="/js/dependencies/angular-animate.js"></script>
+    <script src="/js/dependencies/angular-momentjs.js"></script>
+    <script src="/js/dependencies/moment.js"></script>
+    <script src="/js/dependencies/ngGeolocation.js"></script>
+    <script src="/js/dependencies/sails.io.js"></script>
+    <script src="/js/public/app.js"></script>
+    <script src="/js/public/ServiceController.js"></script>
+    <!--SCRIPTS END-->
   </body>
 </html>

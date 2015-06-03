@@ -39,7 +39,8 @@ module.exports.routes = {
   'post /api/v1/get_nearby': 'PtvController.get_nearby',
   'post /api/v1/get_stops': 'PtvController.get_stops',
   'post /api/v1/get_departures': 'PtvController.get_departures',
-  'post /api/v1/get_line': 'PtvController.get_line'
+  'post /api/v1/get_line': 'PtvController.get_line',
+  'post /api/v1/share': 'PtvController.share'
 
   /***************************************************************************
   *                                                                          *

@@ -1,4 +1,3 @@
-var crypto = require('crypto-js/hmac-sha1');
 var request = require('request');
 var devId = sails.config.ptv.devId;
 var devSecret = sails.config.ptv.devSecret;
@@ -9,6 +8,7 @@ var devSecret = sails.config.ptv.devSecret;
 
 module.exports = {
 
+  // Health Check 
   health_check: function (req, res) {
     var date = new Date();
     date = date.toISOString();
@@ -17,7 +17,7 @@ module.exports = {
     var url = '/v2/healthcheck?timestamp=' + date + '&devid=' + devId;
     var signature = crypto(url, devSecret);      
     
-    requesturl = 'http://timetableapi.ptv.vic.gov.au/v2/healthcheck?timestamp=' + date + '&devid=' + devId + '&signature=' + signature; 
+    requesturl = 'http://timetableapi.ptv.vic.gov.au'+ url + '&signature=' + signature; 
     request(requesturl, function (error, response, body) {
       if (!error && response.statusCode == 200) {
         res.ok(body); 
@@ -25,14 +25,11 @@ module.exports = {
     })
 
   },
+
+  // Get stops nearby with Nearby API
   get_nearby: function (req, res) {
     var params = req.params.all();
-    console.log(params);
-    var url = '/v2/nearme/latitude/' + params.lat + '/longitude/' + params.lng + '?devid=' + devId;
-    console.log(url);
-    var signature = crypto(url, devSecret);      
-
-    requesturl = 'http://timetableapi.ptv.vic.gov.au' + url + '&signature=' + signature;
+    var requesturl = Fetch.getNearby(params.lat, params.lng, devId);
     request(requesturl, function (error, response, body) {
       if (error) {
         res.badRequest(error);
@@ -42,33 +39,25 @@ module.exports = {
     })
   },
 
+  // Get stops nearby with POI API
   get_stops: function (req, res) {
     var params = req.params.all();
-    console.log(params);
-    var location = Location.getBoundaries(params.lat, params.lng);
-    var url = '/v2/poi/' + params.poi + '/lat1/' + location.lat1 + '/long1/' + location.lng1 + '/lat2/' + location.lat2 + '/long2/' + location.lng2 + 
-        '/griddepth/' + 20 + '/limit/' + 4 + '?devid=' + devId;
-    console.log(url);
-    var signature = crypto(url, devSecret);      
-
-    requesturl = 'http://timetableapi.ptv.vic.gov.au' + url + '&signature=' + signature;
+    var requesturl = Fetch.getStops(params.poi, params.lat, params.lng, devId, devSecret);
     request(requesturl, function (error, response, body) {
       if (error && response.statusCode == 200) {
         res.badRequest(error);
       } else {
+        console.log(body);
         res.ok(body);
       }
     })
 
   },
   
+  // Get departures with Broad Departure api
   get_departures: function (req, res) {
     var params = req.params.all();
-    var url = '/v2/mode/' + params.mode + '/stop/' + params.stop + '/departures/by-destination/limit/' + params.limit + '?devid=' + devId;
-    console.log(url);
-    var signature = crypto(url, devSecret);
-
-    var requesturl = 'http://timetableapi.ptv.vic.gov.au' + url + '&signature=' + signature;
+    var requesturl = Fetch.getDepartures(params.mode, params.stop, params.limit, devId, devSecret);
     request(requesturl, function (error, response, body) {
       if (error) {
         res.badRequest(error);
@@ -78,13 +67,10 @@ module.exports = {
     })
   },
 
+  // Get line with Line api
   get_line: function (req, res) {
     var params = req.params.all();
-    var url = '/v2/mode/' + params.mode + '/line/' + params.line + '/stops-for-line?devid=' + devId;
-  
-    var signature = crypto(url, devSecret);
-    var requesturl = 'http://timetableapi.ptv.vic.gov.au' + url + '&signature=' + signature;
-    console.log(requesturl);
+    var requesturl = Fetch.getLine(params.mode, params.line, devId, devSecret);
     request(requesturl, function (error, response, body) {
       if (error) {
         res.badRequest(error);
@@ -94,5 +80,42 @@ module.exports = {
     })
   },
   
+  // Share journey
+  share: function (req, res) {
+    var params = req.params.all();
+    var nodemailer = require('nodemailer');
+    var moment = require('moment');
+    var email = sails.config.email.email;
+    var password = sails.config.password.password;
+
+    params.arrivaltime = moment(params.arrivaltime).add(1, 'hours').calendar();
+
+    // create reusable transporter object using SMTP transport
+    var transporter = nodemailer.createTransport({
+        service: 'Gmail',
+        auth: {
+          user: email,
+          pass: password
+        }
+    });
+
+    var mailOptions = {
+        from: email, // sender address
+        to: params.email, // list of receivers
+        subject: 'Catch up', // Subject line
+        text: 'Catch ' + params.name + ' at ' + params.arrivalplace + ' ' + params.arrivaltime, // plaintext body
+        html: 'Catch ' + params.name + ' at ' + params.arrivalplace + ' ' + params.arrivaltime // html body
+    };
+
+    transporter.sendMail(mailOptions, function(error, info){
+        if(error){
+            console.log(error);
+            res.badRequest(error);
+        }else{
+            console.log('Message sent: ' + info.response);
+            res.ok({mes: 'Thank you. Have a great trip.'});
+        }
+    });
+  }  
 };
 
