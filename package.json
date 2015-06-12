@@ -28,13 +28,13 @@
     "moment": "~2.10.3"
   },
   "scripts": {
-    "start": "node app.js",
+    "start": "sails lift",
     "debug": "node debug app.js"
   },
   "main": "app.js",
   "repository": {
     "type": "git",
-    "url": "git://github.com/tuiqwe/catchup.git"
+    "url": "git://github.com/vuongngo/catchup.git"
   },
   "author": "tuiqwe",
   "license": ""
