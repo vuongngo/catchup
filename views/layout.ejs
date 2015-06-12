@@ -9,63 +9,67 @@
     <meta name="viewport" content="initial-scale=1, maximum-scale=1, user-scalable=no" />
     <link rel="stylesheet" href="/styles/angular-material.css">
     <link rel="stylesheet" href="/styles/app.css">
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons"
+      rel="stylesheet">
   </head>
 
   <body>
 <div ng-app="myApp" layout="column" ng-controller="ServiceController" flex>
-    <md-grid-list
-          md-cols-sm="6" md-cols-md="6" md-cols-gt-md="6"
-          md-row-height-gt-md="5:1" md-row-height="2:1"
-          md-gutter="12px" md-gutter-gt-sm="8px" ng-if="page === 1">
-      <md-grid-tile class="purple"
-          md-rowspan="3" md-colspan="2" md-colspan-sm="6" ng-click="changeMode(1.4)">
-          <md-grid-tile-footer><h3>Walking</h3></md-grid-tile-footer>
-      </md-grid-tile>
-      <md-grid-tile class="gray"
-          md-rowspan="3" md-colspan="2" md-colspan-sm="6" ng-click="changeMode(4.5)">
-          <md-grid-tile-footer><h3>Riding</h3></md-grid-tile-footer>
-      </md-grid-tile>
-      <md-grid-tile class="gray"
-          md-rowspan="3" md-colspan="2" md-colspan-sm="6" ng-click="changeMode(11)">
-          <md-grid-tile-footer><h3>Driving</h3></md-grid-tile-footer>
-      </md-grid-tile>
-    </md-grid-list>
-    <md-grid-list
-          md-cols-sm="6" md-cols-md="6" md-cols-gt-md="6"
-          md-row-height-gt-md="5:1" md-row-height="2:1"
-          md-gutter="12px" md-gutter-gt-sm="8px" ng-if="page === 1">
-      <md-grid-tile class="green"
-          md-rowspan="3" md-colspan="2" md-colspan-sm="6" ng-click="getStops(0)">
-          <md-grid-tile-footer><h3>Train</h3></md-grid-tile-footer>
-      </md-grid-tile>
-      <md-grid-tile class="yellow"
-          md-rowspan="3" md-colspan="2" md-colspan-sm="6" ng-click="getStops(1)">
-          <md-grid-tile-footer><h3>Tram</h3></md-grid-tile-footer>
-      </md-grid-tile>
-      <md-grid-tile class="blue"
-          md-rowspan="3" md-colspan="2" md-colspan-sm="6" ng-click="getStops(2)">
-          <md-grid-tile-footer><h3>Bus</h3></md-grid-tile-footer>
-      </md-grid-tile>
-    </md-grid-list>
+    <md-toolbar>
+      <div class="md-toolbar-tools">
+        <span ng-if="page == 0">How would you like to reach station?</span>
+        <span ng-if="page == 1">Which transportation do you prefer?</span>
+        <span ng-if="page == 2">Which line do you commute?</span>
+        <span ng-if="page == 3">What is your destination?</span>
+        <span ng-if="page == 4">Would you like to have someone pick you up?</span>
+        <span flex></span>
+        <md-button ng-click="page = page - 1">
+          Back
+        </md-button>
+      </div>
+    </md-toolbar>
+    <div layout="row" ng-if="page === 1 || page === 0" style="padding: 5px">
+      <div layout="row" layout-align="center" ng-class="walkClass" flex ng-click="changeMode(1.4, 0)">
+        <md-icon md-svg-icon="walk" class="md-48"></md-icon>
+      </div>
+      <div layout="row" layout-align="center" ng-class="rideClass" flex ng-click="changeMode(4.5, 1)">
+        <md-icon md-svg-icon="bike" class="md-48"></md-icon>
+      </div>
+      <div layout="row" layout-align="center" ng-class="driveClass" flex ng-click="changeMode(11, 2)">
+        <md-icon md-svg-icon="car" class="md-48"></md-icon>
+      </div>
+    </div>
+    <div layout="row" ng-if="page === 1" style="padding: 5px; margin-top: 5px">
+      <div layout="row" layout-align="center" ng-class="busClass" flex ng-click="getStops(0)">
+        <md-icon md-svg-icon="bus" class="md-48"></md-icon>
+      </div>
+      <div layout="row" layout-align="center" ng-class="tramClass" flex ng-click="getStops(1)">
+        <md-icon md-svg-icon="tram" class="md-48"></md-icon>
+      </div>
+      <div layout="row" layout-align="center" ng-class="trainClass" flex ng-click="getStops(2)">
+        <md-icon md-svg-icon="train" class="md-48"></md-icon>
+      </div>
+    </div>
 
   <div layout="column" layout-fill style="padding-bottom: 32px;" ng-repeat="location in locations" ng-if="page === 1">
     <md-whiteframe class="md-whiteframe-z1" layout="column" layout-align="center center" ng-click="getDepartures(location)">
       <h3>{{location.location_name}}</h3>
       <p>Distance: {{ location.distance }} meters</p>
-      <p>Go in: {{ location.needTime }} minutes</p>
+      <p layout="row" layout-align="center center">
+        <md-icon md-svg-icon="timelapse" class="md-24"></md-icon>{{ location.needTime }} minutes
+      </p>
     </md-whiteframe>
   </div>    
   <div layout="column" layout-fill style="padding-bottom: 32px;" ng-repeat="departure in departures" ng-if="page === 2">
     <md-whiteframe class="md-whiteframe-z1" layout="column" layout-align="center center" ng-click="getLine(departure)">
-      <h3>From: {{departure.platform.stop.location_name}} To: {{departure.platform.direction.direction_name}}</h3>
-      <p>Destination: {{ departure.run.destination_name }}</p>
-      <p>{{ departure.time_realtime_utc | date:"EEEE 'at' h:mma" }}</p>
+      <h3 layout="row">{{departure.platform.stop.location_name}} <md-icon md-svg-icon="fromto" class="md-24"></md-icon> {{departure.platform.direction.direction_name}}</h3>
+      <p layout="row" layout-align="center center"> <md-icon md-svg-icon="time" class="md-24"></md-icon>  {{ departure.time_realtime_utc | date:"EEEE 'at' h:mma" }}</p>
       <p>Route: {{departure.platform.direction.linedir_id}}</p>
     </md-whiteframe>
   </div> 
   <div layout="column" layout-fill style="padding-bottom: 32px;" ng-repeat="line in lines" ng-if="page === 3">
     <md-whiteframe class="md-whiteframe-z1" layout="column" layout-align="center center" ng-click="getNotification(line.location_name)">
-      <h3>{{line.location_name}}</h3>
+      <h3 layout="row" layout-align="center center"><md-icon md-svg-icon="stepout" class="md-24"></md-icon> {{line.location_name}}</h3>
       <p>Suburb: {{ line.suburb }}</p>
     </md-whiteframe>
   </div> 
@@ -105,5 +109,7 @@
     <script src="/js/public/app.js"></script>
     <script src="/js/public/ServiceController.js"></script>
     <!--SCRIPTS END-->
+
   </body>
+
 </html>

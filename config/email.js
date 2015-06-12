@@ -1,5 +1,5 @@
 // config/email.js
 module.exports.email = {
-  email: 'xxxxxxx',
-  password: 'dutevcyvlexpmhvanpdv',
+  email: 'tuiqwe@gmail.com',
+  password: 'dutevcyvlexpmhva',
 };

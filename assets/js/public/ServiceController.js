@@ -26,17 +26,56 @@ angular
 		};
 })
 .controller('ServiceController', ['$scope', '$geolocation', 'Services', function($scope, $geolocation, Services, $moment) {
-  $scope.page = 1;
+
+  $scope.walkClass='yellow';
+  $scope.rideClass='yellow';
+  $scope.driveClass='yellow';
+  $scope.busClass='yellow';
+  $scope.tramClass='yellow';
+  $scope.trainClass='yellow';
+  
+  $scope.page = 0;
   $scope.userInput = {};
   $scope.travel = 1.4;
-  $scope.changeMode = function(velo) {
+
+  $scope.changeMode = function(velo, typ) {
+    $scope.page = 1;
   	$scope.travel = velo;
+    if (typ === 0) {
+      $scope.walkClass='blue';
+      $scope.rideClass='yellow';
+      $scope.driveClass='yellow';
+    } else if (typ === 1) {
+      $scope.walkClass='yellow';
+      $scope.rideClass='blue';
+      $scope.driveClass='yellow';
+    } else {
+      $scope.walkClass='yellow';
+      $scope.rideClass='yellow';
+      $scope.driveClass='blue';
+    };
   };
 
   $scope.getStops = function(no) {
+
+    if (no === 0) {
+      $scope.busClass='blue';
+      $scope.tramClass='yellow';
+      $scope.trainClass='yellow';
+    } else if (no === 1) {
+      $scope.busClass='yellow';
+      $scope.tramClass='blue';
+      $scope.trainClass='yellow';
+    } else {
+      $scope.busClass='yellow';
+      $scope.tramClass='yellow';
+      $scope.trainClass='blue';
+    };
+    
 	$geolocation.getCurrentPosition({
         timeout: 60000
      }).then(function(position) {
+
      	console.log([position.coords.latitude, position.coords.longitude]);
         $scope.myLocation = JSON.stringify({poi: no, lat: position.coords.latitude, lng: position.coords.longitude});
 	    Services.get_stops($scope.myLocation).success(function(res) {
