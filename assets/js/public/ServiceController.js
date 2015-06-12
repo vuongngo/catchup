@@ -3,7 +3,7 @@
 angular
 .module('services',['ngMaterial', 'ngGeolocation'])
 .factory('Services', function($http) {
-		var url = 'http://localhost:1337'
+		var url = 'http://catchnshare.herokuapp.com'
 		return {
 			healthcheck: function(page) {
 				return $http.get(url + '/api/v1/healthcheck');
