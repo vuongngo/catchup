@@ -76,7 +76,6 @@ angular
         timeout: 60000
      }).then(function(position) {
 
-     	console.log([position.coords.latitude, position.coords.longitude]);
         $scope.myLocation = JSON.stringify({poi: no, lat: position.coords.latitude, lng: position.coords.longitude});
 	    Services.get_stops($scope.myLocation).success(function(res) {
 	    	$scope.locations = res.locations;
@@ -105,10 +104,8 @@ angular
   	$scope.departureInfo = JSON.stringify({mode: poi, stop: loc.stop_id, limit: 3});
   	$scope.page = 2;
   	$scope.needTime = loc.needTime;
-  	console.log($scope.departureInfo);
   	Services.get_departures($scope.departureInfo).success(function(res) {
   		$scope.departures = res.values;
-  		console.log(res.values[0]);
   	}).error(function(err) {
   		console.log(err);
   	})
@@ -126,13 +123,11 @@ angular
   		poi = 3;
   	};
   	$scope.lineInfo = JSON.stringify({mode: poi, line: dep.platform.direction.line.line_id});
-  	console.log($scope.lineInfo);
   	$scope.startTime = dep.time_realtime_utc;
 
   	$scope.transport_type = dep.platform.stop.transport_type; 
   	$scope.page = 3;
   	Services.get_line($scope.lineInfo).success(function(res) {
-  		console.log(res);
   		$scope.lines = res;
   	}).error(function(err) {
   		console.log(err);
@@ -147,7 +142,6 @@ angular
   	$scope.userInput.arrivaltime = $scope.startTime;
   	$scope.userInput.arrivalplace = $scope.destination;
   	Services.share($scope.userInput).success(function(res) {
-  		console.log(res);
   		$scope.thanks = "Thank you!";
   	}).error(function(err) {
   		console.log(err);
